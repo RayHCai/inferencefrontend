@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+:root {
+    --black: rgb(27, 27, 27);
+    --white: rgb(223, 223, 223);
+    --primary-sub-color: rgb(226, 173, 0);
+}
+
+body {
+    background: var(--black);
+    color: var(--white);
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.styled-button-dark {
+    padding: 10px 30px 10px 30px;
+    background: none;
+    border: 1px solid var(--white);
+    color: var(--white);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.styled-button-dark:hover {
+    background: var(--white);
+    color: var(--black);
+}
+
+.styled-button-colored {
+    padding: 10px 30px 10px 30px;
+    background: none;
+    border: 1px solid var(--white);
+    color: var(--white);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.styled-button-colored:hover {
+    color: var(--primary-sub-color);
+    border-color: var(--primary-sub-color);
+}
+
+/* #region */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+.navbar img {
+    width: 30px;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.calvin-logo-nav-open {
+    padding-right: 200px !important;
+    transition: 0.2s;
+    background: var(--black);
+}
+
+.calvin-logo-nav-open:hover {
+    background: linear-gradient(90deg, var(--primary-sub-color) 50%, var(--black) 50%);
+}
+
+.navbar-links-container {
+    z-index: -1;
+    top: 0;
+    position: absolute;
+    background: var(--white);
+    height: 100vh;
+}
+
+.navbar-links-container div {
+    margin-top: 100px;
+}
+
+.navbar a {
+    display: flex !important;
+    text-decoration: none;
+    color: var(--black);
+    font-weight: bold;
+    padding: 20px 150px 20px 20px;
+    transition: 0.2s;
+}
+
+.navbar a:hover {
+    color: var(--primary-sub-color);
+    background: var(--black);
+}
+
+/* #endregion */
+
+.loading {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    font-size: larger;
+    transform: translate(-50%, -200%);
+}
+
+.loading svg {
+    margin-left: 20px;
+    fill: var(--primary-sub-color);
+}
+
+.forum-container {
+    margin-top: 50px;
+    cursor: pointer;
+    border: 1px solid var(--white);
+    width: 50%;
+    transform: translateX(50%);
+    transition: 0.2s;
+    color: var(--white);
+}
+
+.forum-container:hover {
+    border: 1px solid var(--primary-sub-color);
+    color: var(--primary-sub-color);
+}
+
+.post-container {
+    width: 50%;
+    transform: translateX(50%);
+    margin-top: 50px;
+}

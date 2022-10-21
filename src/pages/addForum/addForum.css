@@ -1,0 +1,46 @@
+.forum-create-container {
+    text-align: center;
+}
+
+.forum-file-upload {
+    transition: 0.2s;
+    cursor: pointer;
+    padding: 10px 20px 10px 20px;
+    
+    outline: none;
+    
+    width: 400px;
+    height: 40px;
+    
+    display: block;
+
+    border: none;
+    margin-bottom: 50px !important;
+
+    transform: translateX(125%);
+}
+
+.forum-file-upload:hover {
+    background: var(--white);
+    color: var(--black);
+}
+
+.forum-create-container div {
+    margin: 20px 0px 20px 0px;
+    width: 50%;
+    transform: translateX(50%);
+    align-items: center;
+    justify-content: center;
+    display: block;
+}
+
+.inference-question-input {
+    display: block;
+    transform: translateX(35%);
+    margin: 10px;
+    padding: 10px 20px 10px 20px;
+    outline: none;
+    width: 50%;
+    height: 40px;
+    border: none;
+}
