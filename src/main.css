@@ -3,7 +3,7 @@
 :root {
     --black: rgb(27, 27, 27);
     --white: rgb(223, 223, 223);
-    --primary-sub-color: rgb(226, 173, 0);
+    --yellow-sub-color: rgb(226, 173, 0);
 }
 
 body {
@@ -44,8 +44,8 @@ button {
 }
 
 .styled-button-colored:hover {
-    color: var(--primary-sub-color);
-    border-color: var(--primary-sub-color);
+    color: var(--yellow-sub-color);
+    border-color: var(--yellow-sub-color);
 }
 
 /* #region Navbar */
@@ -118,7 +118,7 @@ button {
 
 .loading svg {
     margin-left: 20px;
-    fill: var(--primary-sub-color);
+    fill: var(--yellow-sub-color);
 }
 
 .forum-container {
@@ -133,6 +133,6 @@ button {
 }
 
 .forum-container:hover {
-    border: 1px solid var(--primary-sub-color);
-    color: var(--primary-sub-color);
+    border: 1px solid var(--yellow-sub-color);
+    color: var(--yellow-sub-color);
 }

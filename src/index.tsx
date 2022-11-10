@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-import { Navbar } from './components/navbar';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { ForumsList } from './pages/forumsList/forumsList';
 import { AddForum } from './pages/addForum/addForum';
 import { ForumDetails } from './pages/forumdetails/forumDetails';
 import { PageNotFound } from './pages/pageNotFound/pageNotFound';
+
+import { Navbar } from './components/navbar';
 
 import './main.css';
 
@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Router>
+    <BrowserRouter>
       <Navbar />
       
       <Routes>
@@ -28,6 +28,6 @@ root.render(
   
         <Route path='*' element={ <PageNotFound /> } />
       </Routes>
-    </Router>    
+    </BrowserRouter>    
   </React.StrictMode>
 );

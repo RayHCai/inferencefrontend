@@ -43,8 +43,8 @@ export function AddForum() {
             if(forumFile.type.indexOf('csv') === -1) throw new Error('Type of file must be a CSV');
             
             (async function() {
-                let requestData = new FormData();
-                requestData.append('file', forumFile);
+                let forumRequestData = new FormData();
+                forumRequestData.append('file', forumFile);
 
                 let forumRes = await fetch(`${BACKEND_URL}/forums/`, {
                     method: 'POST',
@@ -52,18 +52,14 @@ export function AddForum() {
                     credentials: 'same-origin',
                     redirect: 'follow',
                     referrerPolicy: 'no-referrer',
-                    body: requestData
+                    body: forumRequestData
                 });
                 
                 if(!forumRes.ok) throw new Error('An error while creating forum. Please try again later.');
                 
                 let forumResponseJson = await forumRes.json();
 
-                let cleanedQuestions = [];
-
-                for(let q of questions) {
-                    cleanedQuestions.push((q as any).question);
-                }
+                let cleanedQuestions = questions.map(q => (q as any).question);
 
                 let inferencesRes = await fetch(`${BACKEND_URL}/foruminference/`, {
                     method: 'POST',
@@ -81,9 +77,7 @@ export function AddForum() {
                 });
 
                 if(!inferencesRes.ok) throw new Error('Error occurred while fetching post');
-                else {
-                    navigate('/');
-                }
+                else navigate('/');
             })();
         }
         catch(error) {
@@ -102,11 +96,13 @@ export function AddForum() {
             <label className="custom-forum-file-upload">
                 <input 
                     className="forum-file-upload" 
-                    type="file" name="forum-csv" 
+                    type="file" 
+                    name="forum-csv" 
                     onChange={ 
-                        (e) => updateForumCSV(e.target.files as any) 
+                        e => updateForumCSV(e.target.files as any) 
                     } 
                 />
+                
                 Upload CSV
             </label>
             

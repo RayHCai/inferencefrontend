@@ -7,5 +7,5 @@ export const COLORS = [
     'green', 
     'blue', 
     'magenta', 
-    'cyan'
+    'cyan',
 ];

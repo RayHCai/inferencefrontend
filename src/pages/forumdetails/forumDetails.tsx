@@ -20,13 +20,11 @@ export function ForumDetails() {
 
     const [questionFilter, updateFilter] = useState(-1);
     const [postFilter, updateFilteredPosts] = useState([] as any);
-
-    const [filtering, updateFilterStatus] = useState(false);
+    const [isFiltering, updateFilterStatus] = useState(false);
     const [filterObj, updateFilterObj] = useState({} as any);
 
     const [updateQuestionPosts, updateUpdateQuestionsPosts] = useState([] as any);
     const [updateQuestion, updateQuestionState] = useState(false);
-
     const [newQuestion, updateNewQuestion] = useState('');
 
     const [newInferences, updateInference] = useState({} as any);
@@ -75,8 +73,6 @@ export function ForumDetails() {
 
     function filterQ(qIndex: number) {
         if(qIndex === -1) return;
-        
-        console.log(qIndex);
 
         updateFilter(qIndex);
     }
@@ -105,11 +101,7 @@ export function ForumDetails() {
                 
                 let relationJson = await relationRes.json();
                 
-                let filteredPostIds = [];
-
-                for(let [k, _] of Object.entries(relationJson.data)) {
-                    filteredPostIds.push(k);
-                }
+                let filteredPostIds = Object.keys(relationJson.data);
 
                 updateFilteredPosts([...filteredPostIds]);
                 updateFilter(qIndex);
@@ -130,15 +122,23 @@ export function ForumDetails() {
         else filterQ(filterObj.qIndex);
     }
 
-    if(filtering) return <ForumDetailsModal forumName={ filterObj.forumName } question={ filterObj.question } filter={ masterFilter } close={ () => updateFilterStatus(false) } />;
+    if(isFiltering) return (
+        <ForumDetailsModal 
+            forumName={ filterObj.forumName } 
+            question={ filterObj.question } 
+            filter={ masterFilter } 
+            close={ () => updateFilterStatus(false) } 
+        />
+    );
 
     function select(e: React.ChangeEvent<HTMLInputElement>, postId: string) {
-        if(e.target.checked) updateUpdateQuestionsPosts([...updateQuestionPosts, postId.toString()]);
+        if(e.target.checked) updateUpdateQuestionsPosts([...updateQuestionPosts, postId]);
         else {
             let i = updateQuestionPosts.indexOf(postId);
 
             let copy = [...updateQuestionPosts];
             copy.splice(i, 1);
+
             updateUpdateQuestionsPosts(copy);
         }
     }
@@ -201,13 +201,10 @@ export function ForumDetails() {
         a.href = window.URL.createObjectURL(new Blob([jsonGrades], {type: 'application/json'}));
         a.download = `${forumName}-grades.json`;
 
-        // Append anchor to body.
         document.body.appendChild(a);
         a.click();
 
-        // Remove anchor from body
         document.body.removeChild(a);
-
     }
 
     function saveNewQuestions() {
@@ -251,9 +248,7 @@ export function ForumDetails() {
                 });
 
                 if(!inferencesRes.ok) throw new Error('Error occurred while creating inferences');
-                else {
-                    window.location.reload();
-                }
+                else window.location.reload();
             })();
         }
         catch(error) {
@@ -290,7 +285,7 @@ export function ForumDetails() {
             {
                 updateQuestion ? (
                     <div>
-                        <input className="update-question-input" placeholder="Question" type="text" onChange={ (e) => updateNewQuestion(e.target.value) }/>
+                        <input className="update-question-input" placeholder="Question" type="text" onChange={ e => updateNewQuestion(e.target.value) }/>
                         <button className="styled-button-dark" onClick={ testNewQuestion }>Test</button>
                         <button className="styled-button-dark" onClick={ saveNewQuestions }>Save</button>
                     </div>
@@ -304,10 +299,12 @@ export function ForumDetails() {
                             <h4
                                 style={ {color: COLORS[index] }} 
                                 key={ index }
-                                onClick={ () => {
-                                    if(window.confirm('Update Question?')) updateQuestionsMaster(index);
-                                    else filterQ(index);
-                                } }
+                                onClick={ 
+                                    () => {
+                                        if(window.confirm('Update Question?')) updateQuestionsMaster(index);
+                                        else filterQ(index);
+                                    } 
+                                }
                             >
                                 { q }
                             </h4>
@@ -357,6 +354,7 @@ export function ForumDetails() {
                                                     postId: post.id,
                                                     qIndex: qInd
                                                 });
+
                                                 updateFilterStatus(true);
                                             }
                                         } 
@@ -377,7 +375,15 @@ export function ForumDetails() {
                         }
 
                         return (
-                            <FullForum grade={ grade } questions={ inferences.questions } updatingQuestion={ updateQuestion } userFullname={ post.user_full_name } select={ select } postSpans={ postSpans } postId={ post.id } />
+                            <FullForum 
+                                grade={ grade } 
+                                questions={ inferences.questions } 
+                                updatingQuestion={ updateQuestion } 
+                                userFullname={ post.user_full_name } 
+                                select={ select } 
+                                postSpans={ postSpans } 
+                                postId={ post.id } 
+                            />
                         );
                     }
                 )
