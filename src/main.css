@@ -9,17 +9,23 @@
 body {
     background: var(--black);
     color: var(--white);
-    margin: 0;
     font-family: 'Roboto', sans-serif;
+
+    margin: 0;
+}
+
+button {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
 }
 
 .styled-button-dark {
-    padding: 10px 30px 10px 30px;
     background: none;
     border: 1px solid var(--white);
     color: var(--white);
+    padding: 10px 30px 10px 30px;
+    transition: 0.2s;    
     cursor: pointer;
-    transition: 0.2s;
 }
 
 .styled-button-dark:hover {
@@ -28,10 +34,11 @@ body {
 }
 
 .styled-button-colored {
-    padding: 10px 30px 10px 30px;
     background: none;
-    border: 1px solid var(--white);
     color: var(--white);
+    border: 1px solid var(--white);
+    padding: 10px 30px 10px 30px;
+
     cursor: pointer;
     transition: 0.2s;
 }
@@ -41,7 +48,7 @@ body {
     border-color: var(--primary-sub-color);
 }
 
-/* #region */
+/* #region Navbar */
 
 .navbar {
     position: sticky;
@@ -57,20 +64,24 @@ body {
 
 .calvin-logo-nav-open {
     padding-right: 200px !important;
-    transition: 0.2s;
     background: var(--black);
+    transition: 0.2s;
 }
 
 .calvin-logo-nav-open:hover {
-    background: linear-gradient(90deg, var(--primary-sub-color) 50%, var(--black) 50%);
+    background: linear-gradient(
+        90deg, 
+        var(--primary-sub-color) 50%, 
+        var(--black) 50%
+    );
 }
 
 .navbar-links-container {
     z-index: -1;
     top: 0;
     position: absolute;
-    background: var(--white);
     height: 100vh;
+    background: var(--white);
 }
 
 .navbar-links-container div {
@@ -78,12 +89,13 @@ body {
 }
 
 .navbar a {
-    display: flex !important;
     text-decoration: none;
-    color: var(--black);
     font-weight: bold;
-    padding: 20px 150px 20px 20px;
+    color: var(--black);
     transition: 0.2s;
+
+    padding: 20px 150px 20px 20px;
+    display: flex !important;
 }
 
 .navbar a:hover {
@@ -96,11 +108,12 @@ body {
 .loading {
     display: flex;
     position: absolute;
-    align-items: center;
     top: 50%;
     left: 50%;
-    font-size: larger;
     transform: translate(-50%, -200%);
+
+    align-items: center;
+    font-size: larger;
 }
 
 .loading svg {
@@ -109,22 +122,17 @@ body {
 }
 
 .forum-container {
-    margin-top: 50px;
-    cursor: pointer;
-    border: 1px solid var(--white);
     width: 50%;
     transform: translateX(50%);
-    transition: 0.2s;
+    margin-top: 50px;
+
+    cursor: pointer;
+    border: 1px solid var(--white);
     color: var(--white);
+    transition: 0.2s;
 }
 
 .forum-container:hover {
     border: 1px solid var(--primary-sub-color);
     color: var(--primary-sub-color);
-}
-
-.post-container {
-    width: 50%;
-    transform: translateX(50%);
-    margin-top: 50px;
 }

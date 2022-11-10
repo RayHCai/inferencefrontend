@@ -8,12 +8,13 @@ type forumProps = {
 export function Forum(props: forumProps) {
     const navigate = useNavigate();
 
-    function redirectToForum(id: string) {
-        navigate(`forum/?forumId=${id}`);
-    }
-
     return (
-        <div className="forum-container" onClick={ () => redirectToForum(props.forumId) }>
+        <div 
+            className="forum-container" 
+            onClick={ 
+                () => navigate(`forum/?forumId=${props.forumId}`)
+            }
+        >
             <h4>{ props.name }</h4>
         </div>
     );

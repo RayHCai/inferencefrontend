@@ -2,27 +2,21 @@
     text-align: center;
 }
 
-.forum-file-upload {
+.custom-forum-file-upload {
+    font-weight: bold;
     transition: 0.2s;
     cursor: pointer;
-    padding: 10px 20px 10px 20px;
-    
-    outline: none;
-    
-    width: 400px;
-    height: 40px;
-    
     display: block;
 
-    border: none;
     margin-bottom: 50px !important;
-
-    transform: translateX(125%);
 }
 
-.forum-file-upload:hover {
-    background: var(--white);
-    color: var(--black);
+.custom-forum-file-upload:hover {
+    color: var(--primary-sub-color);
+}
+
+.forum-file-upload {
+    display: none;
 }
 
 .forum-create-container div {

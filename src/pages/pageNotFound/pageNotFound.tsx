@@ -13,7 +13,12 @@ export function PageNotFound() {
 
             <p>We can't find the page you're looking for.</p>
 
-            <button className="styled-button-colored" onClick={() => navigate('/') }>
+            <button 
+                className="styled-button-colored" 
+                onClick={
+                    () => navigate('/') 
+                }
+            >
                 Go back home
             </button>
         </div>

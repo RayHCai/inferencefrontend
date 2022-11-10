@@ -1,11 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { BACKEND_URL } from '../../settings';
 
 import { Loading } from '../../components/loading';
-import { BACKEND_URL } from '../../settings';
 
 import './addForum.css';
 
 export function AddForum() {
+    const navigate = useNavigate();
+
     const [forumCSV, updateForumCSV] = useState([]);
     const [questions, updateQuestions] = useState([] as any[]);
     
@@ -28,29 +32,17 @@ export function AddForum() {
     }
 
     function createNewForum() {
-        if(forumCSV.length === 0) {
-            alert('Need to upload a CSV file');
-
-            return;
-        }
-        else if(forumCSV.length > 1) {
-            alert('Can only upload one forum at a time');
-
-            return;
-        }
-        
-        let forumFile: Blob = forumCSV[0];
-
-        if(forumFile.type.indexOf('csv') === -1) {
-            alert('Type of file must be a CSV');
-
-            return;
-        }
-
         updateLoadingState(true);
-        
-        (async function() {
-            try {
+
+        try {
+            if(forumCSV.length === 0) throw new Error('Need to upload a CSV file');
+            else if(forumCSV.length > 1) throw new Error('Can only upload one file at a time');
+            
+            let forumFile: Blob = forumCSV[0];
+    
+            if(forumFile.type.indexOf('csv') === -1) throw new Error('Type of file must be a CSV');
+            
+            (async function() {
                 let requestData = new FormData();
                 requestData.append('file', forumFile);
 
@@ -63,11 +55,11 @@ export function AddForum() {
                     body: requestData
                 });
                 
-                if(!forumRes.ok) throw new Error('Error while fetching');
+                if(!forumRes.ok) throw new Error('An error while creating forum. Please try again later.');
                 
                 let forumResponseJson = await forumRes.json();
 
-                let cleanedQuestions: string[] = [];
+                let cleanedQuestions = [];
 
                 for(let q of questions) {
                     cleanedQuestions.push((q as any).question);
@@ -90,31 +82,38 @@ export function AddForum() {
 
                 if(!inferencesRes.ok) throw new Error('Error occurred while fetching post');
                 else {
-                    alert('Successfully added Forum and made inferences');
+                    navigate('/');
                 }
-            }
-            catch(error) {
-                alert((error as Error).message);
-            }
-            finally {
-                updateLoadingState(false);
-            }
-        })();
+            })();
+        }
+        catch(error) {
+            alert((error as Error).message);
+        }
+        finally {
+            updateLoadingState(false);
+            updateQuestions([]);
+        }
     }
     
     if(isLoading) return <Loading />;
     
     return (
         <div className="forum-create-container">
-            <input 
-                className="forum-file-upload" 
-                type="file" name="forum-csv" 
-                onChange={ 
-                    (e) => updateForumCSV(e.target.files as any) 
-                } 
-            />
+            <label className="custom-forum-file-upload">
+                <input 
+                    className="forum-file-upload" 
+                    type="file" name="forum-csv" 
+                    onChange={ 
+                        (e) => updateForumCSV(e.target.files as any) 
+                    } 
+                />
+                Upload CSV
+            </label>
             
-            <button className="styled-button-dark" onClick={ addQuestion }>Add question</button>
+            
+            <button className="styled-button-dark" onClick={ addQuestion }>
+                Add question
+            </button>
             
             <div>
                 {
@@ -132,7 +131,9 @@ export function AddForum() {
                 }
             </div>
             
-            <button className="styled-button-colored" onClick={ createNewForum }>Create forum and inferences</button>
+            <button className="styled-button-colored" onClick={ createNewForum }>
+                Create forum and inferences
+            </button>
         </div>
     );        
 }

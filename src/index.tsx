@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import { Navbar } from './components/navbar';
@@ -24,7 +25,7 @@ root.render(
         <Route path='/' element={ < ForumsList/> } />
         <Route path='/addforum' element={ <AddForum/> }/>
         <Route path='/forum' element={ <ForumDetails /> } />
-
+  
         <Route path='*' element={ <PageNotFound /> } />
       </Routes>
     </Router>    

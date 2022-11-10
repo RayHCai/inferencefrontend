@@ -10,6 +10,7 @@ import './forumsList.css';
 
 export function ForumsList() {
     const [forums, updateForums] = useState([] as any[]);
+
     const [isLoading, updateLoadingState] = useState(true);
 
     useEffect(() => {
@@ -17,11 +18,11 @@ export function ForumsList() {
 
         (async function fetchForums() {
             try {
-                let res = await fetch(`${BACKEND_URL}/forums/`);
+                let forumsRes = await fetch(`${BACKEND_URL}/forums/`);
 
-                if(!res.ok) throw new Error('Error occurred while fetching');
+                if(!forumsRes.ok) throw new Error('An error occurred while fetching forums. Please try again later.');
 
-                let forumJson = await res.json();
+                let forumJson = await forumsRes.json();
                 
                 updateForums(forumJson.data)
             }
@@ -32,11 +33,9 @@ export function ForumsList() {
                 updateLoadingState(false);
             }
         })();
-    }, [])
+    }, []);
 
-    if(isLoading) {
-        return <Loading />
-    }
+    if(isLoading) return <Loading />;
     
     return (
         <div className="forums-list-container">
@@ -53,11 +52,7 @@ export function ForumsList() {
                             />
                         )
                     )
-                ) : (
-                    <h3>
-                        No Forums to display. Go <Link to='/addforum'>here</Link> to add one.
-                    </h3>
-                )
+                ) : <h3>No forums found. Go <Link to='/addforum'>here</Link> to add one.</h3>
             }
         </div>
     );
