@@ -71,7 +71,7 @@ button {
 .calvin-logo-nav-open:hover {
     background: linear-gradient(
         90deg, 
-        var(--primary-sub-color) 50%, 
+        var(--yellow-sub-color) 50%, 
         var(--black) 50%
     );
 }
@@ -99,7 +99,7 @@ button {
 }
 
 .navbar a:hover {
-    color: var(--primary-sub-color);
+    color: var(--yellow-sub-color);
     background: var(--black);
 }
 

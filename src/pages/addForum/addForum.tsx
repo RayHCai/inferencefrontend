@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BACKEND_URL } from '../../settings';
+import { createInferences } from '../../utils';
 
 import { Loading } from '../../components/loading';
 
@@ -10,30 +11,15 @@ import './addForum.css';
 export function AddForum() {
     const navigate = useNavigate();
 
+    const questions = useRef([] as any[]);
+    const [numQuestions, updateNumQuestions] = useState(0);
+
     const [forumCSV, updateForumCSV] = useState([]);
-    const [questions, updateQuestions] = useState([] as any[]);
-    
     const [isLoading, updateLoadingState] = useState(false);
-
-    function addQuestion() {
-        updateQuestions([...questions, 
-            {
-                question: ''
-            }
-        ]);
-    }
-
-    function updateQuestion(e: React.ChangeEvent<HTMLInputElement>, index: number) {
-        let updatedQuestions = questions;
-
-        (updatedQuestions as any)[index].question = e.target.value;
-        
-        updateQuestions(updatedQuestions);
-    }
 
     function createNewForum() {
         updateLoadingState(true);
-
+        
         try {
             if(forumCSV.length === 0) throw new Error('Need to upload a CSV file');
             else if(forumCSV.length > 1) throw new Error('Can only upload one file at a time');
@@ -59,22 +45,9 @@ export function AddForum() {
                 
                 let forumResponseJson = await forumRes.json();
 
-                let cleanedQuestions = questions.map(q => (q as any).question);
+                let cleanedQuestions = questions.current.map(q => (q as any).value);
 
-                let inferencesRes = await fetch(`${BACKEND_URL}/foruminference/`, {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                    body: JSON.stringify({
-                        forum_id: forumResponseJson.data,
-                        questions: cleanedQuestions
-                    })
-                });
+                let inferencesRes = await createInferences(forumResponseJson.data as string, cleanedQuestions);
 
                 if(!inferencesRes.ok) throw new Error('Error occurred while fetching post');
                 else navigate('/');
@@ -85,7 +58,6 @@ export function AddForum() {
         }
         finally {
             updateLoadingState(false);
-            updateQuestions([]);
         }
     }
     
@@ -106,24 +78,22 @@ export function AddForum() {
                 Upload CSV
             </label>
             
-            
-            <button className="styled-button-dark" onClick={ addQuestion }>
+            <button className="styled-button-dark" onClick={ () => updateNumQuestions(numQuestions + 1) }>
                 Add question
             </button>
             
             <div>
+
                 {
-                    questions.map(
+                    (new Array(numQuestions)).fill((<input />)).map(
                         (_, index) => (
                             <input 
                                 className="inference-question-input"
                                 key={ index }
-                                onChange={ 
-                                    (e: React.ChangeEvent<HTMLInputElement>) => updateQuestion(e, index) 
-                                } 
+                                ref={ el => questions.current[index] = el }
                             />
                         )
-                    )                
+                    )
                 }
             </div>
             

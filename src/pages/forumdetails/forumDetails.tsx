@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { BACKEND_URL, COLORS } from '../../settings';
+import { createInferences } from '../../utils';
 
 import { Loading } from '../../components/loading';
 import { ForumDetailsModal } from '../../components/forumDetailsModal';
-import { FullForum } from '../../components/fullForum';
 
 import './forumDetails.css';
 
 export function ForumDetails() {
     const [searchParams, _] = useSearchParams();
+
+    const grades = useRef({} as any);
+    const selected = useRef({} as any);
 
     const [loading, updateLoadingState] = useState(false);
 
@@ -28,18 +31,6 @@ export function ForumDetails() {
     const [newQuestion, updateNewQuestion] = useState('');
 
     const [newInferences, updateInference] = useState({} as any);
-
-    const [grades, updateGrades] = useState(null as any);
-
-    if(inferences && !grades) {
-        let dict: any = {};
-
-        for(let post of posts) {
-            dict[(post as any).id] = new Array<any>(inferences.questions.length).fill(0);
-        }
-
-        updateGrades(dict);
-    }
 
     useEffect(() => {
         updateLoadingState(true);
@@ -122,33 +113,16 @@ export function ForumDetails() {
         else filterQ(filterObj.qIndex);
     }
 
-    if(isFiltering) return (
-        <ForumDetailsModal 
-            forumName={ filterObj.forumName } 
-            question={ filterObj.question } 
-            filter={ masterFilter } 
-            close={ () => updateFilterStatus(false) } 
-        />
-    );
-
-    function select(e: React.ChangeEvent<HTMLInputElement>, postId: string) {
-        if(e.target.checked) updateUpdateQuestionsPosts([...updateQuestionPosts, postId]);
-        else {
-            let i = updateQuestionPosts.indexOf(postId);
-
-            let copy = [...updateQuestionPosts];
-            copy.splice(i, 1);
-
-            updateUpdateQuestionsPosts(copy);
-        }
-    }
-
     function updateQuestionsMaster(index: number) {
-        if(updateQuestionPosts.length === 0) return alert('No posts to check against. Please select at least one post.');
-        
+        let selectedPosts = Object.keys(selected.current).filter(
+            postId => selected.current[postId].checked
+        )
+
+        if(selectedPosts.length === 0) return alert('No posts to check against. Please select at least one post.');
+
         updateQuestionState(true);
         updateFilter(index);
-        updateFilteredPosts(updateQuestionPosts);
+        updateFilteredPosts(selectedPosts);
     }
 
     function testNewQuestion() {
@@ -185,16 +159,10 @@ export function ForumDetails() {
         }
     }
 
-    function grade(e: React.ChangeEvent<HTMLInputElement>, i: number, postId: string) {
-        let copy = {...grades};
-
-        copy[postId][i] = Number(e.target.value);
-
-        updateGrades(copy);
-    }
-
     function finalizeGrades() {
-        let jsonGrades = JSON.stringify(grades);
+        let jsonGrades = JSON.stringify(posts.map((e: any) => {
+            return {[e.id]:grades.current[e.id].map((v: any) => Number(v.value))}
+        }));
 
         let a = window.document.createElement('a');
 
@@ -232,20 +200,7 @@ export function ForumDetails() {
 
                 cleanedQuestions[questionFilter] = newQuestion;
 
-                let inferencesRes = await fetch(`${BACKEND_URL}/foruminference/`, {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                    body: JSON.stringify({
-                        forum_id: searchParams.get('forumId'),
-                        questions: cleanedQuestions
-                    })
-                });
+                let inferencesRes = await createInferences(searchParams.get('forumId') as string, cleanedQuestions);
 
                 if(!inferencesRes.ok) throw new Error('Error occurred while creating inferences');
                 else window.location.reload();
@@ -260,6 +215,14 @@ export function ForumDetails() {
     }
 
     if(loading) return <Loading />;
+    else if(isFiltering) return (
+        <ForumDetailsModal 
+            forumName={ filterObj.forumName } 
+            question={ filterObj.question } 
+            filter={ masterFilter } 
+            close={ () => updateFilterStatus(false) } 
+        />
+    );
 
     return (
         <div className="forum-details-container">
@@ -375,15 +338,49 @@ export function ForumDetails() {
                         }
 
                         return (
-                            <FullForum 
-                                grade={ grade } 
-                                questions={ inferences.questions } 
-                                updatingQuestion={ updateQuestion } 
-                                userFullname={ post.user_full_name } 
-                                select={ select } 
-                                postSpans={ postSpans } 
-                                postId={ post.id } 
-                            />
+                            <div className="post-container">
+                                {
+                                    updateQuestion ? null : (
+                                        <input 
+                                            className="check-post" 
+                                            type="checkbox" 
+                                            ref={ el => selected.current[post.id] = el }
+                                        />
+                                    )
+                                }
+                            
+                                <div className="post-content-container">
+                                    <h2>{ post.user_full_name }</h2>
+                            
+                                    {
+                                        postSpans.map(
+                                            (span: any) => span
+                                        )
+                                    }
+                                </div>
+                                
+                                <div className="post-score-container">
+                                    {
+                                        inferences.questions.map(
+                                            (q: any, i: any) => (
+                                                <input 
+                                                    type="number" 
+                                                    className="post-score" 
+                                                    key={ i } 
+                                                    placeholder={ `Grade for ${q}` }
+                                                    ref={ 
+                                                        el => {
+                                                            if(!grades.current[post.id]) grades.current[post.id] = new Array<HTMLInputElement>(inferences.questions.length);
+                                                            
+                                                            grades.current[post.id][i] = el!
+                                                        }
+                                                    } 
+                                                />
+                                            )
+                                        )
+                                    }
+                                </div>
+                            </div>
                         );
                     }
                 )

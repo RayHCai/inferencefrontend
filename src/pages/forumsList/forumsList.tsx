@@ -16,7 +16,7 @@ export function ForumsList() {
     useEffect(() => {
         updateLoadingState(true);
 
-        (async function fetchForums() {
+        (async function() {
             try {
                 let forumsRes = await fetch(`${BACKEND_URL}/forums/`);
 
