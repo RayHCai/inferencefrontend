@@ -6,7 +6,8 @@ export async function createInferences(forumId: string, questions: string[]) {
         cache: 'no-cache',
         credentials: 'same-origin',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
