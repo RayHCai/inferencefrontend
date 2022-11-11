@@ -9,7 +9,7 @@ export async function createInferences(forumId: string, questions: string[]) {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': '*',
-            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Credentials": "false",
             "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT",
         },
         redirect: 'follow',
