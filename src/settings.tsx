@@ -1,4 +1,4 @@
-export const DEBUG = true;
+export const DEBUG = false;
 
 export const BACKEND_URL = DEBUG ? 'http://127.0.0.1:8000' : 'https://inferencebackend-production.up.railway.app/';
 
