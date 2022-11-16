@@ -26,9 +26,9 @@ export function ForumDetails() {
     const [isFiltering, updateFilterStatus] = useState(false);
     const [filterObj, updateFilterObj] = useState({} as any);
 
-    const [updateQuestionPosts, updateUpdateQuestionsPosts] = useState([] as any);
     const [updateQuestion, updateQuestionState] = useState(false);
-    const [newQuestion, updateNewQuestion] = useState('');
+
+    const newQuestion = useRef(null as any);
 
     const [newInferences, updateInference] = useState({} as any);
 
@@ -130,6 +130,10 @@ export function ForumDetails() {
         
         try {
             (async function() {
+                let updateQuestionPosts = Object.keys(selected.current).filter(
+                    k => selected.current[k]
+                );
+                
                 let newRes = await fetch(`${BACKEND_URL}/questioninference/`, {
                     method: 'POST',
                     cache: 'no-cache',
@@ -140,7 +144,7 @@ export function ForumDetails() {
                     redirect: 'follow',
                     referrerPolicy: 'no-referrer',
                     body: JSON.stringify({
-                        question: newQuestion,
+                        question: newQuestion.current.value,
                         forum_id: searchParams.get('forumId'),
                         post_ids: JSON.stringify(updateQuestionPosts)
                     })
@@ -148,6 +152,8 @@ export function ForumDetails() {
                 
                 let newJson = await newRes.json();
                 
+                console.log(newJson.data.inferences, JSON.stringify(updateQuestionPosts));
+
                 updateInference(newJson.data.inferences);
             })();
         }
@@ -234,7 +240,6 @@ export function ForumDetails() {
                         updateFilter(-1);
                         updateFilteredPosts([]);
                         updateQuestionState(false);
-                        updateUpdateQuestionsPosts([]);
                         updateInference({});
                     } 
                 } 
@@ -248,7 +253,7 @@ export function ForumDetails() {
             {
                 updateQuestion ? (
                     <div>
-                        <input className="update-question-input" placeholder="Question" type="text" onChange={ e => updateNewQuestion(e.target.value) }/>
+                        <input className="update-question-input" placeholder="Question" type="text" ref={ newQuestion }/>
                         <button className="styled-button-dark" onClick={ testNewQuestion }>Test</button>
                         <button className="styled-button-dark" onClick={ saveNewQuestions }>Save</button>
                     </div>
@@ -284,6 +289,8 @@ export function ForumDetails() {
                         let postSpans = [];
 
                         let postInferences = updateQuestion && newInferences[post.id] ? [newInferences[post.id]] : inferences.inferences[post.id];
+
+                        if(postFilter.length !== 0) console.log(newInferences);
 
                         let colors = (new Array<string>(post.message.length)).fill('white');
 
@@ -338,16 +345,13 @@ export function ForumDetails() {
                         }
 
                         return (
-                            <div className="post-container">
-                                {
-                                    updateQuestion ? null : (
-                                        <input 
-                                            className="check-post" 
-                                            type="checkbox" 
-                                            ref={ el => selected.current[post.id] = el }
-                                        />
-                                    )
-                                }
+                            <div className="post-container"> 
+                                <input 
+                                    className="check-post" 
+                                    type="checkbox" 
+                                    disabled={ updateQuestion }
+                                    ref={ el => selected.current[post.id] = el }
+                                />
                             
                                 <div className="post-content-container">
                                     <h2>{ post.user_full_name }</h2>
